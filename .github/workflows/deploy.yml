@@ -25,7 +25,7 @@ jobs:
         uses: erlef/setup-beam@v1
         with:
           otp-version: "27.1"
-          gleam-version: "1.6.3"
+          gleam-version: "1.14.0"
 
       - name: Build Lustre bundle
         run: gleam run -m lustre/dev build --minify
