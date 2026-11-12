@@ -27,8 +27,14 @@ jobs:
           otp-version: "27.1"
           gleam-version: "1.14.0"
 
-      - name: Build Lustre bundle
-        run: gleam run -m lustre/dev build --minify
+      - name: Build Gleam JavaScript
+        run: gleam build --target javascript
+
+      - name: Prepare dist folder
+        run: |
+          mkdir -p dist
+          cp index.html animator.css dist/
+          cp -rL build dist/build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -36,7 +42,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."
+          path: "dist"
 
   deploy:
     environment:
