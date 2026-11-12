@@ -1,0 +1,30 @@
+Extension Overview: Interactive Path-Following & Particle Collection Game
+
+1. Core Concept & Gameplay Loop
+This extension transforms the procedural geometric drawings into an interactive path-following and 
+particle-collection game. Instead of passively observing the generated animations, users navigate 
+their cursor along the rendered cyan geometric tracks to collect glowing gold target particles while 
+avoiding stepping off the drawn paths.
+
+2. Technical Implementation Details
+- Unified World-Coordinate Mapping: Cursor events on the canvas are decoded using `offsetX / clientWidth` and `offsetY / clientHeight`
+ normalization and mapped into the engine's native 1000x1000 world coordinate system (-500.0 to +500.0).
+ The gold target overlay uses matching percentage-based CSS transforms inside a responsive wrapper so 
+ visual alignment stays locked to the canvas geometry across all viewport sizes.
+- Dynamic Geometry-Aware Target Spawning: The target spawner inspects the active `List(RenderPath)` points,
+ extracts segment endpoints along with quartile interpolated points (25%, 50%, 75%), and deduplicates 
+ shared vertices via `list.unique`. Using a seeded hash and a minimum jump-distance filter (> 100 world
+  units), each collected particle relocates to a distinct, reachable location across the entire drawing.
+- Point-to-Segment Collision & Cooldown System: Off-track detection computes the exact perpendicular 
+Euclidean distance from the cursor to every rendered line segment (`point_to_segment_dist`). Straying 
+more than 95 world units off the nearest cyan segment deducts 1 Health Point and triggers a 35-tick 
+invulnerability cooldown to prevent rapid multi-hit drains. Reaching 0 HP triggers a Game Over state 
+with a one-click Restart button.
+
+3. How to Try It
+- Select any drawing preset (such as `string_art`, `square_spiral`, or `tree`) from the dropdown menu, 
+or adjust the shape slider to dynamically regenerate the track layout.
+- Move your cursor onto the cyan lines inside the canvas and follow the paths to touch the glowing gold 
+dot (+50 points per pickup).
+- Stay close to the cyan paths to preserve your 3 Health Points, and click "Restart" in the top-right
+HUD at any time to reset your score and health.

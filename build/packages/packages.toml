@@ -1,0 +1,15 @@
+[packages]
+gleeunit = "1.11.0"
+houdini = "1.2.1"
+lustre = "5.7.0"
+glexer = "2.4.0"
+pprint = "1.0.6"
+splitter = "1.2.0"
+gleam_json = "3.1.0"
+gleam_stdlib = "1.0.3"
+gleam_otp = "1.2.0"
+glam = "2.0.4"
+glance = "6.1.0"
+gleam_erlang = "1.3.0"
+
+[git]
