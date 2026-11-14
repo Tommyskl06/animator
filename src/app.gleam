@@ -25,8 +25,8 @@ pub const public_url = "https://github.com/Tommyskl06/animator"
 
 pub const include_app_in_gallery = True
 
-// Replace with your Berkeley Google Drive link (General access -> Anyone with the link)
-pub const video_url = "https://drive.google.com/file/d/your-file-id/view"
+pub const video_url =
+  "https://drive.google.com/file/d/16uJ3pLYxakUutlPaU4bC8grysX1mYUoH/view?usp=sharing"
 
 pub const include_video_in_gallery = True
 
