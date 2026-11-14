@@ -11,7 +11,6 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/result
-import gleam/string
 import lustre
 import lustre/attribute as attr
 import lustre/effect.{type Effect}
@@ -26,36 +25,35 @@ pub const public_url = "https://github.com/Tommyskl06/animator"
 
 pub const include_app_in_gallery = True
 
-// TODO: Replace with your Google Drive share link (General access -> Anyone with the link)
+// Replace with your Berkeley Google Drive link (General access -> Anyone with the link)
 pub const video_url = "https://drive.google.com/file/d/your-file-id/view"
 
 pub const include_video_in_gallery = True
 
-const custom_example_name = "Starlight Orbit (Custom)"
+const custom_example_name = "Butterfly Vortex (Custom)"
 
 const custom_example_code =
-  "fn star_ring(n: Int, i: Int, r_outer: Float, r_inner: Float, spin: Float) -> List(Path) {
-  if i >= n {
-    []
-  } else {
-    let step = 6.283185 /. int_to_float(n)
-    let a1 = int_to_float(i) *. step
-    let a2 = int_to_float(i + 1) *. step
-    let r1 = if i % 2 == 0 { r_outer } else { r_inner }
-    let r2 = if (i + 1) % 2 == 0 { r_outer } else { r_inner }
-    let p1 = Point(r1 *. cos(a1), r1 *. sin(a1))
-    let p2 = Point(r2 *. cos(a2), r2 *. sin(a2))
-    let seg = Path(Line(p1, p2), 0.0, 0.0, spin)
-    [seg, ..star_ring(n, i + 1, r_outer, r_inner, spin)]
-  }
+  "fn draw(shape_slider: Int) -> List(Path) {
+  let turns = 16 + shape_slider / 5
+  list.append(
+    wing(Point(0, 0), Point(1, 0), 0, turns, 1),
+    wing(Point(0, 0), Point(-1, 0), 0, turns, -1),
+  )
 }
 
-fn draw(shape_slider: Int) -> List(Path) {
-  let pulse = 240.0 +. int_to_float(shape_slider) *. 1.4
-  let inner = pulse *. 0.48
-  let outer_track = star_ring(16, 0, pulse, inner, 0.6)
-  let inner_track = star_ring(8, 0, inner *. 0.9, inner *. 0.45, -1.2)
-  append(outer_track, inner_track)
+fn wing(p: Point, d: Point, i: Int, n: Int, dir: Int) -> List(Path) {
+  case i == n {
+    True -> []
+    False -> {
+      let len = { i + 2 } * 18
+      let q = Point(p.x + d.x * len, p.y + d.y * len)
+      let next_d = Point({ 0 - d.y } * dir, d.x * dir)
+      [
+        Path(Line(p, q), i * 2, i * 2 + 10, 3),
+        ..wing(q, next_d, i + 1, n, dir)
+      ]
+    }
+  }
 }
 "
 
@@ -100,7 +98,6 @@ pub type Msg {
 
 pub fn init(_flags: Nil) -> #(Model, Effect(Msg)) {
   let lib: data.Library = data.load_library()
-  // Inject our custom track into the library and set it as default if not already saved
   let merged_drawings = case dict.has_key(lib.drawings, custom_example_name) {
     True -> lib.drawings
     False -> dict.insert(lib.drawings, custom_example_name, custom_example_code)
@@ -373,7 +370,7 @@ fn evaluate_and_render(
   case run_source(shape_slider, source) {
     Ok(paths) -> {
       let r_paths = list.map(paths, fn(p) { render.render_path(p, "#00ffff") })
-      #(string.inspect(paths), r_paths)
+      #("", r_paths)
     }
     Error(msg) -> #(msg, [])
   }
@@ -462,7 +459,25 @@ fn view_anim(model: Model) -> Element(Msg) {
       ],
     ),
 
-    html.pre([attr.class("output")], [html.text(model.output)]),
+    case model.output {
+      "" -> element.none()
+      err ->
+        html.pre(
+          [
+            attr.class("output"),
+            attr.style("position", "absolute"),
+            attr.style("bottom", "20px"),
+            attr.style("left", "20px"),
+            attr.style("max-width", "360px"),
+            attr.style("background", "rgba(127, 29, 29, 0.9)"),
+            attr.style("color", "#fecaca"),
+            attr.style("padding", "8px 12px"),
+            attr.style("border-radius", "6px"),
+            attr.style("z-index", "10"),
+          ],
+          [html.text(err)],
+        )
+    },
   ])
 }
 
