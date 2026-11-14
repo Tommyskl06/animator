@@ -26,7 +26,7 @@ pub const public_url = "https://tommyskl06.github.io/animator/"
 pub const include_app_in_gallery = True
 
 pub const video_url =
-  "https://drive.google.com/file/d/16uJ3pLYxakUutlPaU4bC8grysX1mYUoH/view?usp=sharing"
+  "https://drive.google.com/file/d/16uJ3pLYxakUutlPaU4bC8grysX1mYUoH/view?usp=share_link"
 
 pub const include_video_in_gallery = True
 
