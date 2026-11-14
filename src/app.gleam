@@ -103,9 +103,9 @@ pub fn init(_flags: Nil) -> #(Model, Effect(Msg)) {
     False -> dict.insert(lib.drawings, custom_example_name, custom_example_code)
   }
 
-  let initial_active = case dict.has_key(merged_drawings, custom_example_name) {
-    True -> custom_example_name
-    False -> lib.active
+  let initial_active = case dict.has_key(merged_drawings, lib.active) {
+    True -> lib.active
+    False -> custom_example_name
   }
 
   let current_source = case dict.get(merged_drawings, initial_active) {
@@ -594,7 +594,15 @@ fn view_controls(model: Model) -> Element(Msg) {
         attr.value(float.to_string(model.speed)),
         attr.attribute("data-test-id", "speed-slider"),
         event.on_input(fn(val) {
-          case float.parse(val) {
+          let parsed = case float.parse(val) {
+            Ok(s) -> Ok(s)
+            Error(_) ->
+              case int.parse(val) {
+                Ok(n) -> Ok(int.to_float(n))
+                Error(_) -> Error(Nil)
+              }
+          }
+          case parsed {
             Ok(s) -> SetSpeed(s)
             Error(_) -> SetSpeed(model.speed)
           }
