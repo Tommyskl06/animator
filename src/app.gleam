@@ -21,7 +21,7 @@ import parser
 import render
 import shape.{type Path, type Point, Point}
 
-pub const public_url = "https://github.com/Tommyskl06/animator"
+pub const public_url = "https://tommyskl06.github.io/animator/"
 
 pub const include_app_in_gallery = True
 
